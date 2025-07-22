@@ -2,433 +2,216 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WeDrop Order</title>
   <style>
-    /* Background gradient */
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3f4f6;
       margin: 0;
-      padding: 20px;
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding: 0;
       color: #333;
     }
-
-    /* Container for page content */
-    #page-container {
-      background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-      width: 90%;
-      max-width: 600px;
-      padding: 30px 40px;
-      box-sizing: border-box;
-      margin-top: 20px;
-      margin-bottom: 40px;
-    }
-
-    /* Header banner image */
-    #banner {
-      width: 100%;
-      height: 140px;
-      background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80');
-      background-size: cover;
-      background-position: center;
-      border-radius: 15px;
-      margin-bottom: 25px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-
-    h1 {
-      margin: 0 0 15px 0;
-      font-weight: 700;
-      font-size: 2.8rem;
-      color: #2c3e50;
+    header {
+      background-color: #00b894;
+      color: white;
       text-align: center;
-      position: relative;
-    }
-
-    /* subtle behind title shape */
-    h1::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: -10px;
-      transform: translateX(-50%);
-      width: 150px;
-      height: 6px;
-      background: #ff6f61;
-      border-radius: 5px;
-      opacity: 0.6;
-    }
-
-    /* Categories grid */
-    #categories {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-      margin-bottom: 35px;
-    }
-
-    .tile {
-      background: #fafafa;
-      border-radius: 15px;
-      padding: 22px 18px;
-      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 1.3rem;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      user-select: none;
-      color: #444;
-    }
-
-    .tile:hover {
-      box-shadow: 0 14px 25px rgba(0,0,0,0.15);
-      transform: translateY(-6px);
-      color: #ff6f61;
-      font-weight: 700;
-    }
-
-    .tile .icon {
+      padding: 1rem 0;
       font-size: 1.8rem;
+      font-weight: bold;
     }
-
-    /* Dropdown menus */
-    .dropdown {
-      margin-top: 10px;
-      text-align: left;
-      display: none;
+    .container {
+      max-width: 960px;
+      margin: auto;
+      padding: 1rem;
     }
-
-    .dropdown.open {
-      display: block;
-    }
-
-    .dropdown-item {
-      padding: 12px 15px;
-      margin: 6px 0;
-      border-radius: 10px;
-      background: #fff;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      font-size: 1rem;
-      user-select: none;
-      border: 1.8px solid transparent;
-    }
-
-    .dropdown-item:hover {
-      background-color: #ffebe9;
-      border-color: #ff6f61;
-    }
-
-    .dropdown-item.selected {
-      background-color: #ff6f61;
-      color: white;
-      font-weight: 700;
-      box-shadow: 0 0 10px rgba(255,111,97,0.7);
-      border-color: #ff4a3b;
-    }
-
-    /* Cart list */
-    #cart-items {
-      list-style: none;
-      padding: 0;
-      margin-top: 20px;
-      max-width: 100%;
-      text-align: left;
-    }
-
-    #cart-items li {
-      background: #fff0f0;
-      margin: 8px 0;
-      padding: 12px 18px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(255,111,97,0.15);
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #b33a2c;
-    }
-
-    #total {
-      font-size: 1.4rem;
-      margin-top: 20px;
-      font-weight: 700;
-      color: #ff4a3b;
-      text-align: center;
-      letter-spacing: 0.05em;
-    }
-
-    .cart-buttons {
-      margin-top: 25px;
+    .category-grid {
       display: flex;
-      justify-content: center;
-      gap: 25px;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
     }
-
-    .cart-buttons button {
-      padding: 12px 30px;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: 20px;
+    .category {
+      flex: 1 1 calc(50% - 1rem);
+      background: white;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       cursor: pointer;
-      box-shadow: 0 8px 18px rgba(255,111,97,0.3);
-      color: white;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
+      text-align: center;
+      transition: 0.3s;
     }
-
-    .clear {
-      background-color: #ff4a3b;
+    .category:hover {
+      background: #dfe6e9;
     }
-
-    .clear:hover {
-      background-color: #e0392a;
-      box-shadow: 0 10px 25px rgba(224,57,42,0.6);
+    .items {
+      margin-top: 1rem;
+      display: none;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
-
-    form {
-      max-width: 480px;
-      margin: 40px auto 60px;
+    .item {
+      background: #ffeaa7;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      flex: 1 1 45%;
+      text-align: center;
+    }
+    .item.selected {
+      background: #fab1a0;
+    }
+    .order-summary {
       background: #fff;
-      padding: 30px 35px;
-      border-radius: 20px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-      text-align: left;
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
-    label {
-      font-weight: 700;
-      display: block;
-      margin-top: 20px;
-      margin-bottom: 8px;
+    .order-summary h3 {
+      margin-top: 0;
+    }
+    .buttons {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .buttons button {
+      flex: 1;
+      padding: 0.7rem;
       font-size: 1rem;
-      color: #555;
-    }
-
-    textarea, input {
-      width: 100%;
-      padding: 12px 15px;
-      box-sizing: border-box;
-      border-radius: 10px;
-      border: 2px solid #ddd;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
-      font-family: inherit;
-    }
-
-    textarea:focus, input:focus {
-      border-color: #ff6f61;
-      outline: none;
-    }
-
-    textarea[readonly] {
-      background: #f9f9f9;
-      color: #666;
-      cursor: not-allowed;
-    }
-
-    button.submit {
-      margin-top: 30px;
-      width: 100%;
-      padding: 15px 0;
-      background: #ff6f61;
-      color: white;
       border: none;
-      border-radius: 25px;
-      font-size: 1.3rem;
-      font-weight: 700;
+      border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 12px 30px rgba(255,111,97,0.4);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
     }
-
-    button.submit:hover {
-      background: #ff4a3b;
-      box-shadow: 0 15px 40px rgba(255,74,59,0.6);
+    .clear {
+      background: #d63031;
+      color: white;
     }
-
-    /* Responsive */
+    .confirm {
+      background: #00b894;
+      color: white;
+    }
+    form {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    input, textarea {
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
     @media (max-width: 600px) {
-      #categories {
-        grid-template-columns: 1fr;
+      .category {
+        flex: 1 1 100%;
+      }
+      .item {
+        flex: 1 1 100%;
       }
     }
   </style>
 </head>
 <body>
-
-  <div id="page-container">
-
-    <div id="banner"></div>
-
-    <h1>🛒 WeDrop Order</h1>
-
-    <div id="categories"></div>
-
-    <h2>Your Selected Items</h2>
-    <ul id="cart-items"></ul>
-    <p id="total">Total: $0.00</p>
-
-    <div class="cart-buttons">
-      <button class="clear" onclick="clearCart()">Clear Cart</button>
+  <header>WeDrop Order</header>
+  <div class="container">
+    <div class="category-grid">
+      <div class="category" onclick="toggleItems('drinks')">Drinks</div>
+      <div class="category" onclick="toggleItems('chips')">Chips</div>
+      <div class="category" onclick="toggleItems('sweets')">Sweets</div>
+      <div class="category" onclick="toggleItems('dairy')">Dairy</div>
     </div>
 
-    <form id="order-form" onsubmit="submitOrder(event)">
-      <label for="items">Items</label>
-      <textarea id="items" name="items" rows="3" readonly placeholder="Your selected items will appear here"></textarea>
+    <div id="drinks" class="items">
+      <div class="item" onclick="selectItem(this, 'Pepsi', 2)">Pepsi - $2</div>
+      <div class="item" onclick="selectItem(this, 'Sprite', 2)">Sprite - $2</div>
+    </div>
 
-      <label for="name">Your Name</label>
-      <input type="text" id="name" name="name" required />
+    <div id="chips" class="items">
+      <div class="item" onclick="selectItem(this, 'Lays', 1.5)">Lays - $1.5</div>
+      <div class="item" onclick="selectItem(this, 'Doritos', 1.5)">Doritos - $1.5</div>
+    </div>
 
-      <label for="phone">Phone Number</label>
-      <input type="tel" id="phone" name="phone" required />
+    <div id="sweets" class="items">
+      <div class="item" onclick="selectItem(this, 'KitKat', 1)">KitKat - $1</div>
+      <div class="item" onclick="selectItem(this, 'Snickers', 1)">Snickers - $1</div>
+    </div>
 
-      <label for="address">Delivery Address</label>
-      <textarea id="address" name="address" rows="2" required></textarea>
+    <div id="dairy" class="items">
+      <div class="item" onclick="selectItem(this, 'Milk', 3)">Milk - $3</div>
+      <div class="item" onclick="selectItem(this, 'Yogurt', 2)">Yogurt - $2</div>
+    </div>
 
-      <button type="submit" class="submit">Confirm Order</button>
-    </form>
+    <div class="order-summary">
+      <h3>Order Summary</h3>
+      <ul id="orderList"></ul>
+      <p><strong>Total:</strong> $<span id="total">0</span></p>
 
+      <div class="buttons">
+        <button class="clear" onclick="clearCart()">Clear Cart</button>
+        <button class="confirm" onclick="confirmOrder()">Confirm Order</button>
+      </div>
+
+      <form id="orderForm">
+        <input type="text" placeholder="Your Name" required>
+        <input type="tel" placeholder="Phone Number" required>
+        <textarea placeholder="Delivery Address" rows="3" required></textarea>
+      </form>
+    </div>
   </div>
 
   <script>
-    const items = {
-      Drinks: [
-        { name: "Pepsi", price: 1.5, icon: "🥤" },
-        { name: "Coke", price: 1.5, icon: "🥤" },
-        { name: "Sprite", price: 1.5, icon: "🥤" },
-      ],
-      Chips: [
-        { name: "Lays Classic", price: 1.2, icon: "🍟" },
-        { name: "Doritos", price: 1.3, icon: "🍟" },
-        { name: "Cheetos", price: 1.4, icon: "🍟" },
-      ],
-      Sweets: [
-        { name: "KitKat", price: 1.0, icon: "🍫" },
-        { name: "Snickers", price: 1.1, icon: "🍫" },
-        { name: "M&Ms", price: 1.2, icon: "🍫" },
-      ],
-      Dairy: [
-        { name: "Milk", price: 2.0, icon: "🥛" },
-        { name: "Yogurt", price: 1.8, icon: "🥛" },
-        { name: "Cheese", price: 2.5, icon: "🧀" },
-      ]
-    };
+    const selectedItems = new Map();
+    let activeCategory = null;
 
-    const container = document.getElementById("categories");
-    const cartList = document.getElementById("cart-items");
-    const totalAmount = document.getElementById("total");
-    const itemsTextarea = document.getElementById("items");
-
-    let cart = [];
-
-    function createTile(category) {
-      const tile = document.createElement("div");
-      tile.className = "tile";
-      tile.innerHTML = `<span class="icon">${items[category][0].icon}</span> ${category}`;
-
-      const dropdown = document.createElement("div");
-      dropdown.className = "dropdown";
-
-      items[category].forEach(item => {
-        const opt = document.createElement("div");
-        opt.className = "dropdown-item";
-        opt.textContent = `${item.name} - $${item.price.toFixed(2)}`;
-        opt.onclick = (e) => {
-          e.stopPropagation();
-          toggleItemSelection(opt, item);
-        };
-        dropdown.appendChild(opt);
+    function toggleItems(category) {
+      const sections = document.querySelectorAll('.items');
+      sections.forEach(sec => {
+        if (sec.id === category) {
+          sec.style.display = 'flex';
+        } else {
+          sec.style.display = 'none';
+        }
       });
-
-      tile.onclick = () => {
-        // Toggle dropdown visibility without closing on item click
-        const currentlyOpen = dropdown.classList.contains("open");
-        // Close all dropdowns first
-        document.querySelectorAll(".dropdown").forEach(d => d.classList.remove("open"));
-        // Open clicked if was closed
-        if (!currentlyOpen) dropdown.classList.add("open");
-      };
-
-      tile.appendChild(dropdown);
-      return tile;
+      activeCategory = category;
     }
 
-    function toggleItemSelection(element, item) {
-      const index = cart.findIndex(i => i.name === item.name);
-      if (index === -1) {
-        cart.push(item);
-        element.classList.add("selected");
+    function selectItem(el, name, price) {
+      if (selectedItems.has(name)) {
+        selectedItems.delete(name);
+        el.classList.remove('selected');
       } else {
-        cart.splice(index, 1);
-        element.classList.remove("selected");
+        selectedItems.set(name, price);
+        el.classList.add('selected');
       }
-      updateCartUI();
+      updateOrderList();
     }
 
-    function updateCartUI() {
-      // Update cart list
-      cartList.innerHTML = "";
-      cart.forEach(i => {
-        const li = document.createElement("li");
-        li.textContent = `${i.name} - $${i.price.toFixed(2)}`;
-        cartList.appendChild(li);
+    function updateOrderList() {
+      const list = document.getElementById('orderList');
+      const total = document.getElementById('total');
+      list.innerHTML = '';
+      let sum = 0;
+      selectedItems.forEach((price, name) => {
+        const li = document.createElement('li');
+        li.textContent = `${name} - $${price}`;
+        list.appendChild(li);
+        sum += price;
       });
-
-      // Update total
-      const total = cart.reduce((sum, i) => sum + i.price, 0);
-      totalAmount.textContent = `Total: $${total.toFixed(2)}`;
-
-      // Update form textarea
-      itemsTextarea.value = cart.map(i => i.name).join(", ");
+      total.textContent = sum.toFixed(2);
     }
 
     function clearCart() {
-      cart = [];
-      updateCartUI();
-      document.querySelectorAll(".dropdown-item.selected").forEach(el => el.classList.remove("selected"));
+      selectedItems.clear();
+      document.querySelectorAll('.item.selected').forEach(el => el.classList.remove('selected'));
+      updateOrderList();
     }
 
-    function submitOrder(event) {
-      event.preventDefault();
-
-      if (cart.length === 0) {
-        alert("Please select at least one item to order.");
-        return;
-      }
-
-      const name = document.getElementById("name").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const address = document.getElementById("address").value.trim();
-
-      if (!name || !phone || !address) {
-        alert("Please fill in all your details.");
-        return;
-      }
-
-      const orderSummary = `Order Summary:\nItems: ${cart.map(i => i.name).join(", ")}\nTotal: $${cart.reduce((sum, i) => sum + i.price, 0).toFixed(2)}\n\nName: ${name}\nPhone: ${phone}\nAddress: ${address}`;
-
-      alert(orderSummary + "\n\nThank you for your order!");
-
-      // Reset form and cart
-      clearCart();
-      event.target.reset();
+    function confirmOrder() {
+      alert("Order confirmed! (Demo only — not sent anywhere yet)");
     }
-
-    // Generate UI
-    Object.keys(items).forEach(cat => container.appendChild(createTile(cat)));
   </script>
-
 </body>
 </html>
