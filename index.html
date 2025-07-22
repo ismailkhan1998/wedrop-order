@@ -367,15 +367,31 @@
       };
 
       fetch("https://script.google.com/macros/s/AKfycbxE2QqVzXYCWyYHJMlt1Y6SlqFMoQQtw6hubcXW9K9vvbN38-tVsmaLqJkvgFsmilSzTQ/exec", {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-      .then(() => {
-        alert("Order submitted successfully!");
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+})
+.then(response => response.json())
+.then(res => {
+  if (res.success) {
+    alert("Order submitted successfully!");
+    selectedItems.clear();
+    items.forEach(item => item.classList.remove("selected"));
+    updateOrderList();
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+    document.getElementById("address").value = "";
+  } else {
+    alert("Something went wrong. Try again.");
+  }
+})
+.catch(err => {
+  alert("Network error. Please check your connection and try again.");
+  console.error(err);
+});
+
         selectedItems.clear();
         items.forEach(item => item.classList.remove("selected"));
         updateOrderList();
