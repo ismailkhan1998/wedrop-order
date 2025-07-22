@@ -1,294 +1,394 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WeDrop Order</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f3f4f6;
-      margin: 0;
-      padding: 0;
-      color: #333;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WeDrop Order</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    margin: 0; padding: 20px;
+    color: #222;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #0077cc;
+    font-weight: 700;
+  }
+  /* Container for categories */
+  .categories {
+    max-width: 640px;
+    margin: 0 auto 30px auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  /* Each category tile */
+  .category-tile {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.12);
+    padding: 22px 15px 15px 15px;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    text-align: center;
+    font-weight: 600;
+    color: #004a7c;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  }
+  .category-tile:hover {
+    box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+  }
+  .category-tile.active {
+    background-color: #0077cc;
+    color: white;
+  }
+  /* Icon area */
+  .category-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+  }
+  /* Items dropdown container under each category */
+  .items-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    z-index: 10;
+    display: none;
+    padding: 10px 10px 15px 10px;
+  }
+  .items-container.active {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 12px;
+  }
+  /* Each item tile */
+  .item {
+    flex: 1 1 45%;
+    max-width: 45%;
+    background: #e6f2fc;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: #004a7c;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    user-select: none;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .item:hover {
+    background-color: #0077cc;
+    color: white;
+    box-shadow: 0 7px 15px rgba(0,119,204,0.7);
+  }
+  .item.selected {
+    background-color: #004a7c;
+    color: white;
+    box-shadow: 0 7px 15px rgba(0,119,204,0.9);
+  }
+
+  /* Order summary container */
+  .order-summary {
+    max-width: 640px;
+    margin: 0 auto;
+    background: white;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  }
+  .order-summary h2 {
+    margin-top: 0;
+    color: #0077cc;
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+  #orderList {
+    list-style: none;
+    padding-left: 0;
+    max-height: 160px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  #orderList li {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+  }
+  .total-container {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #005f99;
+    text-align: right;
+    margin-bottom: 25px;
+  }
+  /* Form styles */
+  form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #004a7c;
+  }
+  form input {
+    width: 100%;
+    padding: 11px 12px;
+    font-size: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 7px;
+    margin-bottom: 18px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+  form input:focus {
+    outline: none;
+    border-color: #0077cc;
+  }
+  /* Buttons */
+  .buttons {
+    text-align: right;
+  }
+  button {
+    background: #0077cc;
+    color: white;
+    font-weight: 700;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    margin-left: 12px;
+  }
+  button:hover {
+    background: #005f99;
+  }
+
+  /* Responsive for smaller screens */
+  @media (max-width: 480px) {
+    .categories {
+      grid-template-columns: 1fr !important;
+      max-width: 100%;
+      padding: 0 10px;
     }
-    header {
-      background-color: #030605;
-      color: white;
-      text-align: center;
-      padding: 1rem 0;
-      font-size: 1.8rem;
-      font-weight: bold;
+    .category-tile {
+      margin-bottom: 60px; /* give space for dropdown */
     }
-    .container {
-      max-width: 960px;
-      margin: auto;
-      padding: 1rem;
-    }
-    .category-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: space-between;
-    }
-    .category {
-      flex: 1 1 calc(50% - 1rem);
-      background: white;
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      cursor: pointer;
-      text-align: center;
-      transition: 0.3s;
-    }
-    .category:hover {
-      background: #dfe6e9;
-    }
-    .items {
-      margin-top: 1rem;
+    .items-container {
+      position: static;
+      width: 100% !important;
+      box-shadow: none !important;
+      border-radius: 0 0 10px 10px !important;
+      padding: 15px 10px !important;
       display: none;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      justify-content: space-between;
+    }
+    .items-container.active {
+      display: flex;
     }
     .item {
-      background: #ffeaa7;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      flex: 1 1 45%;
-      text-align: center;
+      flex-basis: 48% !important;
+      max-width: 48% !important;
+      margin-bottom: 12px;
     }
-    .item.selected {
-      background: #fab1a0;
-    }
-    .order-summary {
-      background: #fff;
-      margin-top: 1.5rem;
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .order-summary h3 {
-      margin-top: 0;
-    }
-    .buttons {
-      margin-top: 1rem;
-      display: flex;
-      gap: 1rem;
-    }
-    .buttons button {
-      flex: 1;
-      padding: 0.7rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .clear {
-      background: #d63031;
-      color: white;
-    }
-    .confirm {
-      background: #00b894;
-      color: white;
-    }
-    form {
-      margin-top: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-    }
-    input, textarea {
-      padding: 0.6rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-    @media (max-width: 600px) {
-      .category {
-        flex: 1 1 100%;
-      }
-      .item {
-        flex: 1 1 100%;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <header>WeDrop Order</header>
-  <div class="container">
-    <div class="category-grid">
-      <div class="category" onclick="toggleItems('drinks')">Drinks</div>
-      <div class="category" onclick="toggleItems('chips')">Chips</div>
-      <div class="category" onclick="toggleItems('sweets')">Sweets</div>
-      <div class="category" onclick="toggleItems('dairy')">Dairy</div>
-    </div>
 
-    <div id="drinks" class="items">
-      <div class="item" onclick="selectItem(this, 'Pepsi', 2)">Pepsi - $2</div>
-      <div class="item" onclick="selectItem(this, 'Sprite', 2)">Sprite - $2</div>
-    </div>
+<h1>WeDrop Order</h1>
 
-    <div id="chips" class="items">
-      <div class="item" onclick="selectItem(this, 'Lays', 1.5)">Lays - $1.5</div>
-      <div class="item" onclick="selectItem(this, 'Doritos', 1.5)">Doritos - $1.5</div>
-    </div>
-
-    <div id="sweets" class="items">
-      <div class="item" onclick="selectItem(this, 'KitKat', 1)">KitKat - $1</div>
-      <div class="item" onclick="selectItem(this, 'Snickers', 1)">Snickers - $1</div>
-    </div>
-
-    <div id="dairy" class="items">
-      <div class="item" onclick="selectItem(this, 'Milk', 3)">Milk - $3</div>
-      <div class="item" onclick="selectItem(this, 'Yogurt', 2)">Yogurt - $2</div>
-    </div>
-
-    <div class="order-summary">
-      <h3>Order Summary</h3>
-      <ul id="orderList"></ul>
-      <p><strong>Total:</strong> $<span id="total">0</span></p>
-
-      <div class="buttons">
-        <button class="clear" onclick="clearCart()">Clear Cart</button>
-        <button class="confirm" onclick="confirmOrder()">Confirm Order</button>
-      </div>
-
-      <form id="orderForm">
-        <input type="text" placeholder="Your Name" required>
-        <input type="tel" placeholder="Phone Number" required>
-        <textarea placeholder="Delivery Address" rows="3" required></textarea>
-      </form>
+<div class="categories">
+  <div class="category-tile" data-category="drinks">
+    <div class="category-icon">🥤</div>
+    Drinks
+    <div class="items-container" id="drinks">
+      <div class="item" data-name="Pepsi" data-price="1.50">Pepsi 🥤 - $1.50</div>
+      <div class="item" data-name="Diet Coke" data-price="1.60">Diet Coke 🥤 - $1.60</div>
+      <div class="item" data-name="Sprite" data-price="1.40">Sprite 🥤 - $1.40</div>
+      <div class="item" data-name="Orange Juice" data-price="2.00">Orange Juice 🍊 - $2.00</div>
     </div>
   </div>
 
-  <script>
-  const selectedItems = new Map();
-  let activeCategory = null;
+  <div class="category-tile" data-category="chips">
+    <div class="category-icon">🍟</div>
+    Chips
+    <div class="items-container" id="chips">
+      <div class="item" data-name="Classic Chips" data-price="2.00">Classic Chips 🍟 - $2.00</div>
+      <div class="item" data-name="Salted Chips" data-price="2.10">Salted Chips 🧂 - $2.10</div>
+      <div class="item" data-name="BBQ Chips" data-price="2.50">BBQ Chips 🔥 - $2.50</div>
+      <div class="item" data-name="Cheese Chips" data-price="2.70">Cheese Chips 🧀 - $2.70</div>
+    </div>
+  </div>
 
-  // Load saved items from localStorage on page load
-  window.onload = () => {
-    const saved = localStorage.getItem('wedropCart');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      for (const [name, price] of Object.entries(parsed)) {
-        selectedItems.set(name, price);
-        // Mark items as selected in the UI
-        document.querySelectorAll('.item').forEach(el => {
-          if (el.textContent.includes(name)) {
-            el.classList.add('selected');
-          }
-        });
-      }
+  <div class="category-tile" data-category="sweets">
+    <div class="category-icon">🍬</div>
+    Sweets
+    <div class="items-container" id="sweets">
+      <div class="item" data-name="Chocolate Bar" data-price="1.20">Chocolate Bar 🍫 - $1.20</div>
+      <div class="item" data-name="Gummy Bears" data-price="1.00">Gummy Bears 🐻 - $1.00</div>
+      <div class="item" data-name="Lollipop" data-price="0.50">Lollipop 🍭 - $0.50</div>
+      <div class="item" data-name="Candy Cane" data-price="0.75">Candy Cane 🍬 - $0.75</div>
+    </div>
+  </div>
+
+  <div class="category-tile" data-category="dairy">
+    <div class="category-icon">🥛</div>
+    Dairy
+    <div class="items-container" id="dairy">
+      <div class="item" data-name="Milk" data-price="2.50">Milk 🥛 - $2.50</div>
+      <div class="item" data-name="Cheese" data-price="3.00">Cheese 🧀 - $3.00</div>
+      <div class="item" data-name="Yogurt" data-price="1.80">Yogurt 🍦 - $1.80</div>
+      <div class="item" data-name="Butter" data-price="2.20">Butter 🧈 - $2.20</div>
+    </div>
+  </div>
+</div>
+
+<div class="order-summary">
+  <h2>Your Order</h2>
+  <ul id="orderList"></ul>
+  <div class="total-container">Total: $<span id="total">0.00</span></div>
+
+  <form id="orderForm" onsubmit="return false;">
+    <label for="name">Name</label>
+    <input id="name" type="text" placeholder="Your name" required />
+    <label for="phone">Phone</label>
+    <input id="phone" type="tel" placeholder="Your phone number" required />
+    <label for="address">Delivery Address</label>
+    <input id="address" type="text" placeholder="Your delivery address" required />
+
+    <div class="buttons">
+      <button type="button" id="clearCart">Clear Cart</button>
+      <button type="submit" id="submitOrder">Confirm Order</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  window.onload = function () {
+    const categories = document.querySelectorAll(".category-tile");
+    const selectedItems = new Map();
+
+    // Handle category tile clicks: toggle only own items dropdown
+    categories.forEach(cat => {
+      const itemsContainer = cat.querySelector(".items-container");
+      cat.addEventListener("click", () => {
+        if (itemsContainer.classList.contains("active")) {
+          // Close if already open
+          itemsContainer.classList.remove("active");
+          cat.classList.remove("active");
+        } else {
+          // Close others first
+          categories.forEach(c => {
+            c.classList.remove("active");
+            c.querySelector(".items-container").classList.remove("active");
+          });
+          // Open clicked category
+          itemsContainer.classList.add("active");
+          cat.classList.add("active");
+        }
+      });
+    });
+
+    // Item selection logic
+    const items = document.querySelectorAll(".item");
+    items.forEach(item => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation(); // prevent triggering category toggle
+        const name = item.dataset.name;
+        const price = parseFloat(item.dataset.price);
+        if (selectedItems.has(name)) {
+          selectedItems.delete(name);
+          item.classList.remove("selected");
+        } else {
+          selectedItems.set(name, price);
+          item.classList.add("selected");
+        }
+        updateOrderList();
+      });
+    });
+
+    const orderList = document.getElementById("orderList");
+    const totalDisplay = document.getElementById("total");
+    const clearCartBtn = document.getElementById("clearCart");
+    const submitOrderBtn = document.getElementById("submitOrder");
+
+    function updateOrderList() {
+      orderList.innerHTML = "";
+      let total = 0;
+      selectedItems.forEach((price, name) => {
+        const li = document.createElement("li");
+        li.textContent = `${name} - $${price.toFixed(2)}`;
+        orderList.appendChild(li);
+        total += price;
+      });
+      totalDisplay.textContent = total.toFixed(2);
+    }
+
+    clearCartBtn.addEventListener("click", () => {
+      selectedItems.clear();
+      items.forEach(item => item.classList.remove("selected"));
       updateOrderList();
-    }
-  };
+      document.getElementById("name").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("address").value = "";
+    });
 
-  function toggleItems(category) {
-    const sections = document.querySelectorAll('.items');
-    sections.forEach(sec => {
-      if (sec.id === category) {
-        sec.style.display = 'flex';
-      } else {
-        sec.style.display = 'none';
+    submitOrderBtn.addEventListener("click", () => {
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const address = document.getElementById("address").value.trim();
+
+      if (!name || !phone || !address) {
+        alert("Please fill in all the fields.");
+        return;
       }
+      if (selectedItems.size === 0) {
+        alert("Please select at least one item.");
+        return;
+      }
+
+      const data = {
+        name,
+        phone,
+        address,
+        items: Array.from(selectedItems.keys()),
+        total: parseFloat(totalDisplay.textContent)
+      };
+
+      fetch("https://script.google.com/macros/s/AKfycbxE2QqVzXYCWyYHJMlt1Y6SlqFMoQQtw6hubcXW9K9vvbN38-tVsmaLqJkvgFsmilSzTQ/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(() => {
+        alert("Order submitted successfully!");
+        selectedItems.clear();
+        items.forEach(item => item.classList.remove("selected"));
+        updateOrderList();
+        document.getElementById("name").value = "";
+        document.getElementById("phone").value = "";
+        document.getElementById("address").value = "";
+      })
+      .catch(err => {
+        alert("Network error. Please check your connection and try again.");
+        console.error(err);
+      });
     });
-    activeCategory = category;
-  }
-
-  function selectItem(el, name, price) {
-    if (selectedItems.has(name)) {
-      selectedItems.delete(name);
-      el.classList.remove('selected');
-    } else {
-      selectedItems.set(name, price);
-      el.classList.add('selected');
-    }
-    updateOrderList();
-    saveCart();
-  }
-
-  function updateOrderList() {
-    const list = document.getElementById('orderList');
-    const total = document.getElementById('total');
-    list.innerHTML = '';
-    let sum = 0;
-    selectedItems.forEach((price, name) => {
-      const li = document.createElement('li');
-      li.textContent = `${name} - $${price}`;
-      list.appendChild(li);
-      sum += price;
-    });
-    total.textContent = sum.toFixed(2);
-  }
-
-  function clearCart() {
-    selectedItems.clear();
-    document.querySelectorAll('.item.selected').forEach(el => el.classList.remove('selected'));
-    updateOrderList();
-    saveCart();
-  }
-
-  function confirmOrder() {
-  const name = document.querySelector('#orderForm input[type="text"]').value.trim();
-  const phone = document.querySelector('#orderForm input[type="tel"]').value.trim();
-  const address = document.querySelector('#orderForm textarea').value.trim();
-
-  if (!name || !phone || !address) {
-    alert("Please fill in all fields before confirming your order.");
-    return;
-  }
-
-  if (selectedItems.size === 0) {
-    alert("Your cart is empty. Please select items before confirming.");
-    return;
-  }
-
-  // Prepare order data
-  const itemsArray = [];
-  selectedItems.forEach((price, name) => {
-    itemsArray.push(`${name} - $${price}`);
-  });
-  const orderData = {
-    name: name,
-    phone: phone,
-    address: address,
-    items: itemsArray.join(", "),
-    total: document.getElementById('total').textContent,
   };
-
-  // Send data to Google Sheets via your web app URL
-  fetch('https://script.google.com/macros/s/AKfycbxE2QqVzXYCWyYHJMlt1Y6SlqFMoQQtw6hubcXW9K9vvbN38-tVsmaLqJkvgFsmilSzTQ/exec', {
-    method: 'POST',
-    body: JSON.stringify(orderData),
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.result === 'success') {
-      alert("Order confirmed! Thank you.");
-      clearCart();
-      document.getElementById('orderForm').reset();
-    } else {
-      alert("There was a problem sending your order. Please try again.");
-    }
-  })
-  .catch(() => {
-    alert("Network error. Please check your connection and try again.");
-  });
-}
-
-
-  // Save cart to localStorage
-  function saveCart() {
-    const obj = {};
-    selectedItems.forEach((price, name) => {
-      obj[name] = price;
-    });
-    localStorage.setItem('wedropCart', JSON.stringify(obj));
-  }
 </script>
 
 </body>
