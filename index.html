@@ -13,7 +13,7 @@
       color: #333;
     }
     header {
-      background-color: #00b894;
+      background-color: #030605;
       color: white;
       text-align: center;
       padding: 1rem 0;
@@ -163,55 +163,133 @@
   </div>
 
   <script>
-    const selectedItems = new Map();
-    let activeCategory = null;
+  const selectedItems = new Map();
+  let activeCategory = null;
 
-    function toggleItems(category) {
-      const sections = document.querySelectorAll('.items');
-      sections.forEach(sec => {
-        if (sec.id === category) {
-          sec.style.display = 'flex';
-        } else {
-          sec.style.display = 'none';
-        }
-      });
-      activeCategory = category;
-    }
-
-    function selectItem(el, name, price) {
-      if (selectedItems.has(name)) {
-        selectedItems.delete(name);
-        el.classList.remove('selected');
-      } else {
+  // Load saved items from localStorage on page load
+  window.onload = () => {
+    const saved = localStorage.getItem('wedropCart');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      for (const [name, price] of Object.entries(parsed)) {
         selectedItems.set(name, price);
-        el.classList.add('selected');
+        // Mark items as selected in the UI
+        document.querySelectorAll('.item').forEach(el => {
+          if (el.textContent.includes(name)) {
+            el.classList.add('selected');
+          }
+        });
       }
       updateOrderList();
     }
+  };
 
-    function updateOrderList() {
-      const list = document.getElementById('orderList');
-      const total = document.getElementById('total');
-      list.innerHTML = '';
-      let sum = 0;
-      selectedItems.forEach((price, name) => {
-        const li = document.createElement('li');
-        li.textContent = `${name} - $${price}`;
-        list.appendChild(li);
-        sum += price;
-      });
-      total.textContent = sum.toFixed(2);
-    }
+  function toggleItems(category) {
+    const sections = document.querySelectorAll('.items');
+    sections.forEach(sec => {
+      if (sec.id === category) {
+        sec.style.display = 'flex';
+      } else {
+        sec.style.display = 'none';
+      }
+    });
+    activeCategory = category;
+  }
 
-    function clearCart() {
-      selectedItems.clear();
-      document.querySelectorAll('.item.selected').forEach(el => el.classList.remove('selected'));
-      updateOrderList();
+  function selectItem(el, name, price) {
+    if (selectedItems.has(name)) {
+      selectedItems.delete(name);
+      el.classList.remove('selected');
+    } else {
+      selectedItems.set(name, price);
+      el.classList.add('selected');
     }
+    updateOrderList();
+    saveCart();
+  }
 
-    function confirmOrder() {
-      alert("Order confirmed! (Demo only — not sent anywhere yet)");
+  function updateOrderList() {
+    const list = document.getElementById('orderList');
+    const total = document.getElementById('total');
+    list.innerHTML = '';
+    let sum = 0;
+    selectedItems.forEach((price, name) => {
+      const li = document.createElement('li');
+      li.textContent = `${name} - $${price}`;
+      list.appendChild(li);
+      sum += price;
+    });
+    total.textContent = sum.toFixed(2);
+  }
+
+  function clearCart() {
+    selectedItems.clear();
+    document.querySelectorAll('.item.selected').forEach(el => el.classList.remove('selected'));
+    updateOrderList();
+    saveCart();
+  }
+
+  function confirmOrder() {
+  const name = document.querySelector('#orderForm input[type="text"]').value.trim();
+  const phone = document.querySelector('#orderForm input[type="tel"]').value.trim();
+  const address = document.querySelector('#orderForm textarea').value.trim();
+
+  if (!name || !phone || !address) {
+    alert("Please fill in all fields before confirming your order.");
+    return;
+  }
+
+  if (selectedItems.size === 0) {
+    alert("Your cart is empty. Please select items before confirming.");
+    return;
+  }
+
+  // Prepare order data
+  const itemsArray = [];
+  selectedItems.forEach((price, name) => {
+    itemsArray.push(`${name} - $${price}`);
+  });
+  const orderData = {
+    name: name,
+    phone: phone,
+    address: address,
+    items: itemsArray.join(", "),
+    total: document.getElementById('total').textContent,
+  };
+
+  // Send data to Google Sheets via your web app URL
+  fetch('https://script.google.com/macros/s/AKfycbxE2QqVzXYCWyYHJMlt1Y6SlqFMoQQtw6hubcXW9K9vvbN38-tVsmaLqJkvgFsmilSzTQ/exec', {
+    method: 'POST',
+    body: JSON.stringify(orderData),
+    headers: {
+      'Content-Type': 'application/json',
     }
-  </script>
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.result === 'success') {
+      alert("Order confirmed! Thank you.");
+      clearCart();
+      document.getElementById('orderForm').reset();
+    } else {
+      alert("There was a problem sending your order. Please try again.");
+    }
+  })
+  .catch(() => {
+    alert("Network error. Please check your connection and try again.");
+  });
+}
+
+
+  // Save cart to localStorage
+  function saveCart() {
+    const obj = {};
+    selectedItems.forEach((price, name) => {
+      obj[name] = price;
+    });
+    localStorage.setItem('wedropCart', JSON.stringify(obj));
+  }
+</script>
+
 </body>
 </html>
