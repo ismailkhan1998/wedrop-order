@@ -2,66 +2,108 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>WeDrop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
   <style>
     body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f2f4f7, #e0eafc);
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f2f2f2;
+      padding: 1rem;
       color: #333;
     }
 
-    header {
-      background-color: #ffffff;
-      padding: 1rem;
+    h1 {
       text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      font-size: 2.8rem;
+      font-weight: 600;
+      font-family: 'Segoe Script', cursive, 'Poppins', sans-serif;
+      color: #2a2a72;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 3px rgba(42,42,114,0.4);
     }
 
-    header h1 {
-      margin: 0;
-      font-family: 'Pacifico', cursive;
-      font-size: 2rem;
-      color: #000000;
-    }
-
-    .container {
-      max-width: 480px;
-      margin: auto;
-      padding: 1rem;
+    .categories {
+      display: flex;
+      justify-content: flex-start;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      scroll-behavior: smooth;
+      position: sticky;
+      top: 0;
+      background: linear-gradient(135deg, #f2f4f7, #e0eafc);
+      z-index: 100;
     }
 
     .category {
-      margin-bottom: 1rem;
-    }
-
-    .category h2 {
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 0.2rem;
-    }
-
-    .item {
-      background-color: #fff;
-      padding: 0.75rem;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      cursor: pointer;
+      text-align: center;
+      padding: 0.8rem 1rem;
+      min-width: 100px;
+      flex-shrink: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      gap: 0.3rem;
+      transition: all 0.3s ease;
     }
 
-    .item-name {
-      flex: 1;
+    .category img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .category.active {
+      background-color: #2a2a72;
+      color: white;
+      box-shadow: 0 8px 25px rgba(42, 42, 114, 0.6);
+    }
+
+    .category-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .product {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      padding: 1rem;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .product:hover {
+      transform: translateY(-5px);
+    }
+
+    .product img {
+      max-width: 90px;
+      margin-bottom: 0.5rem;
     }
 
     .quantity-controls {
       display: flex;
-      gap: 0.5rem;
+      justify-content: center;
       align-items: center;
+      gap: 0.6rem;
+      margin-top: 1rem;
     }
 
     .quantity-controls button {
@@ -71,202 +113,316 @@
       width: 32px;
       height: 32px;
       font-weight: bold;
-      font-size: 1rem;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 1.1rem;
       cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease;
     }
 
-    .quantity-controls button:hover {
-      transform: scale(1.1);
-      background-color: #f5f5f5;
+    .quantity {
+      min-width: 20px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.1rem;
     }
 
-    .cart {
-      background: #fff;
-      padding: 1rem;
-      margin-top: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    .cart-summary {
+      max-width: 500px;
+      margin: 2rem auto;
+      background: #ffffff;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      color: #2a2a72;
     }
 
-    .cart h3 {
-      margin-top: 0;
+    .cart-summary h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      font-weight: 700;
     }
 
-    .cart-item {
+    .cart-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem 0;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .cart-list li {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 0.5rem;
       align-items: center;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #eee;
     }
 
-    .remove-btn {
+    .cart-list button.remove-item {
       background: none;
       border: none;
-      color: red;
+      font-size: 1.2rem;
+      color: #c0392b;
       cursor: pointer;
-      font-size: 1rem;
     }
 
-    .total {
-      font-weight: bold;
-      margin-top: 1rem;
+    .clear-cart-btn {
+      display: block;
+      width: 100%;
+      padding: 0.7rem;
+      border: none;
+      background-color: #2a2a72;
+      color: white;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
     }
 
     form {
-      margin-top: 1.5rem;
-      background-color: #fff;
-      padding: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      max-width: 500px;
+      margin: 0 auto 3rem;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
-    input[type="text"] {
+    form input, form button {
       width: 100%;
-      padding: 0.75rem;
-      margin-bottom: 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 0.5rem;
+      font-size: 1rem;
     }
 
-    button[type="submit"], .clear-btn {
-      background-color: #007bff;
+    form button {
+      background-color: #2a2a72;
       color: white;
-      padding: 0.75rem;
-      border: none;
-      border-radius: 5px;
+      font-weight: 600;
       cursor: pointer;
-      width: 100%;
-      margin-top: 0.5rem;
     }
 
-    .clear-btn {
-      background-color: #dc3545;
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+      .category {
+        min-width: 90px;
+        padding: 0.6rem 0.8rem;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>WeDrop</h1>
-  </header>
+  <h1>WeDrop</h1>
+  <div class="categories" id="categoryList"></div>
+  <div class="product-grid" id="productList"></div>
 
-  <div class="container">
-    <div class="category">
-      <h2>Snacks</h2>
-      <div class="item">
-        <span class="item-name">Chips</span>
-        <div class="quantity-controls">
-          <button onclick="updateQuantity('Chips', -1)">−</button>
-          <span id="qty-Chips">0</span>
-          <button onclick="updateQuantity('Chips', 1)">+</button>
-        </div>
-      </div>
-      <div class="item">
-        <span class="item-name">Popcorn</span>
-        <div class="quantity-controls">
-          <button onclick="updateQuantity('Popcorn', -1)">−</button>
-          <span id="qty-Popcorn">0</span>
-          <button onclick="updateQuantity('Popcorn', 1)">+</button>
-        </div>
-      </div>
+  <section class="cart-summary" id="cartSummary" style="display:none;">
+    <h2>Your Cart</h2>
+    <ul class="cart-list" id="cartList"></ul>
+    <div style="text-align:center; font-weight: 700; font-size: 1.2rem; margin: 1rem 0;">
+      Total: $<span id="totalPrice">0.00</span>
     </div>
+    <button class="clear-cart-btn" id="clearCartBtn" type="button">Clear Cart</button>
+  </section>
 
-    <div class="cart" id="cartSection">
-      <h3>Cart</h3>
-      <div id="cartItems"></div>
-      <div class="total" id="totalPrice">Total: $0.00</div>
-      <button class="clear-btn" onclick="clearCart()">Clear Cart</button>
-    </div>
+  <form id="orderForm">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <input type="tel" id="phone" placeholder="Phone Number" required />
+    <input type="text" id="address" placeholder="Delivery Address" required />
+    <button type="button" id="submitOrderBtn">Submit Order</button>
+  </form>
 
-    <form onsubmit="submitOrder(event)">
-      <input type="text" id="name" placeholder="Your Name" required />
-      <input type="text" id="phone" placeholder="Phone Number" required />
-      <input type="text" id="address" placeholder="Delivery Address" required />
-      <button type="submit">Submit Order</button>
-    </form>
-  </div>
-
-  <script>
-    let cart = {};
-    const prices = { Chips: 1.99, Popcorn: 2.49 };
-
-    function updateQuantity(item, change) {
-      if (!cart[item]) cart[item] = 0;
-      cart[item] += change;
-      if (cart[item] <= 0) delete cart[item];
-      document.getElementById(`qty-${item}`).innerText = cart[item] || 0;
-      renderCart();
+<script>
+  const categories = [
+    {
+      name: "Snacks",
+      img: "https://cdn-icons-png.flaticon.com/512/1046/1046784.png",
+      products: [
+        { name: "Chips", img: "https://cdn-icons-png.flaticon.com/512/2921/2921822.png", price: 2.25 },
+        { name: "Nuts", img: "https://cdn-icons-png.flaticon.com/512/2329/2329951.png", price: 3.5 }
+      ]
+    },
+    {
+      name: "Cold Drinks",
+      img: "https://cdn-icons-png.flaticon.com/512/888/888879.png",
+      products: [
+        { name: "Pepsi", img: "https://cdn-icons-png.flaticon.com/512/888/888879.png", price: 1.75 },
+        { name: "Diet Coke", img: "https://cdn-icons-png.flaticon.com/512/733/733579.png", price: 1.85 }
+      ]
+    },
+    {
+      name: "Sweets",
+      img: "https://cdn-icons-png.flaticon.com/512/2762/2762080.png",
+      products: [
+        { name: "Chocolate", img: "https://cdn-icons-png.flaticon.com/512/198/198277.png", price: 2.5 },
+        { name: "Candy", img: "https://cdn-icons-png.flaticon.com/512/4076/4076653.png", price: 1.2 }
+      ]
     }
+  ];
 
-    function renderCart() {
-      const cartItemsDiv = document.getElementById('cartItems');
-      cartItemsDiv.innerHTML = '';
-      let total = 0;
-      for (let item in cart) {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'cart-item';
-        const price = prices[item] * cart[item];
-        total += price;
-        itemDiv.innerHTML = `
-          <span>${item} x${cart[item]}</span>
-          <button class="remove-btn" onclick="removeItem('${item}')">×</button>
-        `;
-        cartItemsDiv.appendChild(itemDiv);
-      }
-      document.getElementById('totalPrice').innerText = `Total: $${total.toFixed(2)}`;
-    }
+  const categoryList = document.getElementById('categoryList');
+  const productList = document.getElementById('productList');
+  const cartList = document.getElementById('cartList');
+  const totalPriceEl = document.getElementById('totalPrice');
+  const cartSummary = document.getElementById('cartSummary');
+  const clearCartBtn = document.getElementById('clearCartBtn');
+  const submitOrderBtn = document.getElementById('submitOrderBtn');
+  const orderForm = document.getElementById('orderForm');
 
-    function removeItem(item) {
-      delete cart[item];
-      document.getElementById(`qty-${item}`).innerText = 0;
-      renderCart();
-    }
+  const orderData = {};
 
-    function clearCart() {
-      cart = {};
-      document.querySelectorAll('[id^="qty-"]').forEach(el => el.innerText = '0');
-      renderCart();
-    }
-
-    function submitOrder(event) {
-      event.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const address = document.getElementById('address').value.trim();
-      if (!name || !phone || !address || Object.keys(cart).length === 0) {
-        alert('Please fill out all fields and select at least one item.');
-        return;
-      }
-
-      const orderDetails = Object.entries(cart).map(([item, qty]) => `${item} x${qty}`).join(', ');
-      const total = Object.entries(cart).reduce((acc, [item, qty]) => acc + prices[item] * qty, 0).toFixed(2);
-
-      const payload = {
-        name,
-        phone,
-        address,
-        order: orderDetails,
-        total
+  function renderCategories() {
+    categories.forEach((cat, i) => {
+      const div = document.createElement('div');
+      div.className = 'category';
+      if (i === 0) div.classList.add('active');
+      div.dataset.index = i;
+      div.innerHTML = `
+        <img src="${cat.img}" />
+        <div class="category-name">${cat.name}</div>
+      `;
+      div.onclick = () => {
+        document.querySelectorAll('.category').forEach(c => c.classList.remove('active'));
+        div.classList.add('active');
+        renderProducts(i);
       };
+      categoryList.appendChild(div);
+    });
+  }
 
-      fetch("https://script.google.com/macros/s/AKfycby00LFwnWnuKmdqgMxDO7x9Nf1FYhfn3tM4-TekbSbnpnY9PvDtRO4LBxg_8CMiS8Te3A/exec", {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-      .then(() => {
-        alert("Order submitted successfully!");
-        clearCart();
-        document.querySelector("form").reset();
-      })
-      .catch(() => alert("Error submitting order. Please try again."));
-    }
-  </script>
+  function renderProducts(index) {
+    productList.innerHTML = '';
+    const items = categories[index].products;
+    items.forEach(product => {
+      if (!(product.name in orderData)) orderData[product.name] = 0;
+      const div = document.createElement('div');
+      div.className = 'product';
+      div.innerHTML = `
+        <img src="${product.img}" />
+        <h3>${product.name}</h3>
+        <div>$${product.price.toFixed(2)}</div>
+        <div class="quantity-controls">
+          <button onclick="updateQuantity('${product.name}', -1)">−</button>
+          <span class="quantity" id="qty-${product.name}">${orderData[product.name]}</span>
+          <button onclick="updateQuantity('${product.name}', 1)">+</button>
+        </div>
+      `;
+      productList.appendChild(div);
+    });
+    updateCart();
+  }
+
+  function updateQuantity(product, change) {
+    orderData[product] = Math.max(0, (orderData[product] || 0) + change);
+    const qtySpan = document.getElementById(`qty-${product}`);
+    if (qtySpan) qtySpan.textContent = orderData[product];
+    updateCart();
+  }
+
+  function removeFromCart(product) {
+    orderData[product] = 0;
+    const qtySpan = document.getElementById(`qty-${product}`);
+    if (qtySpan) qtySpan.textContent = '0';
+    updateCart();
+  }
+
+  function updateCart() {
+    cartList.innerHTML = '';
+    let total = 0;
+    let hasItems = false;
+
+    Object.entries(orderData).forEach(([name, qty]) => {
+      if (qty > 0) {
+        hasItems = true;
+        let price = 0;
+        for (const cat of categories) {
+          const p = cat.products.find(p => p.name === name);
+          if (p) {
+            price = p.price;
+            break;
+          }
+        }
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${qty} x ${name} - $${(qty * price).toFixed(2)}
+          <button class="remove-item" onclick="removeFromCart('${name}')">&times;</button>
+        `;
+        cartList.appendChild(li);
+        total += qty * price;
+      }
+    });
+
+    totalPriceEl.textContent = total.toFixed(2);
+    cartSummary.style.display = hasItems ? 'block' : 'none';
+  }
+
+  clearCartBtn.onclick = () => {
+    Object.keys(orderData).forEach(p => {
+      orderData[p] = 0;
+      const qtySpan = document.getElementById(`qty-${p}`);
+      if (qtySpan) qtySpan.textContent = '0';
+    });
+    updateCart();
+    orderForm.reset();
+  };
+
+  submitOrderBtn.onclick = () => {
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const address = document.getElementById('address').value.trim();
+
+    if (!name || !phone || !address) return alert('Please fill in all fields.');
+
+    const items = Object.entries(orderData)
+      .filter(([_, qty]) => qty > 0)
+      .map(([product, qty]) => `${qty} x ${product}`)
+      .join(', ');
+
+    if (!items) return alert('Please select at least one item.');
+
+    let total = 0;
+    Object.entries(orderData).forEach(([name, qty]) => {
+      if (qty > 0) {
+        for (const cat of categories) {
+          const p = cat.products.find(p => p.name === name);
+          if (p) {
+            total += p.price * qty;
+            break;
+          }
+        }
+      }
+    });
+
+    const payload = {
+      name,
+      phone,
+      address,
+      order: items,
+      total: total.toFixed(2)
+    };
+
+    fetch('https://script.google.com/macros/s/AKfycby00LFwnWnuKmdqgMxDO7x9Nf1FYhfn3tM4-TekbSbnpnY9PvDtRO4LBxg_8CMiS8Te3A/exec', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.ok ? res.text() : Promise.reject(res))
+    .then(() => {
+      alert("Order submitted successfully!");
+      clearCartBtn.onclick();
+    })
+    .catch(() => alert("Something went wrong. Try again."));
+  };
+
+  renderCategories();
+  renderProducts(0);
+</script>
 </body>
 </html>
